@@ -1,0 +1,17 @@
+{% extends 'games/base.html' %}
+
+{% block title %}Remove Game{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 text-center">
+        <h2>Remove Game</h2>
+        <p>Are you sure you want to remove <strong>{{ game.name }}</strong> from your playlist?</p>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Yes, Remove</button>
+            <a href="{% url 'game_list' %}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

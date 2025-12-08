@@ -1,0 +1,59 @@
+{% extends 'games/base.html' %}
+
+{% block title %}Your Games{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2>Your Game Playlist</h2>
+  <a class="btn btn-success" href="{% url 'game_create' %}"><i class="bi bi-plus-circle"></i> Add Game</a>
+</div>
+
+<form method="get" class="mb-3">
+  <input type="text" name="q" class="form-control" placeholder="Search games..." value="{{ q }}">
+</form>
+
+<div class="row">
+  {% for game in games %}
+  <div class="col-md-4 mb-3">
+    <div class="card p-3 h-100">
+      <h5 class="card-title">{{ game.name }}</h5>
+      <p class="card-text">{{ game.description|default:"No description" }}</p>
+      <div class="d-flex justify-content-between mt-auto">
+        <a href="{% url 'game_update' game.id %}" class="btn btn-primary"><i class="bi bi-pencil"></i> Edit</a>
+        <a href="{% url 'game_delete' game.id %}" class="btn btn-danger"><i class="bi bi-trash"></i> Delete</a>
+      </div>
+    </div>
+  </div>
+  {% empty %}
+  <p>No games in your playlist yet. Add some!</p>
+  {% endfor %}
+</div>
+
+<div class="mt-3">
+  {% if games.has_other_pages %}
+  <nav aria-label="Page navigation">
+    <ul class="pagination justify-content-center">
+      {% if games.has_previous %}
+        <li class="page-item"><a class="page-link" href="?page={{ games.previous_page_number }}{% if q %}&q={{ q }}{% endif %}">Previous</a></li>
+      {% else %}
+        <li class="page-item disabled"><span class="page-link">Previous</span></li>
+      {% endif %}
+      
+      {% for num in games.paginator.page_range %}
+        {% if games.number == num %}
+          <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+        {% else %}
+          <li class="page-item"><a class="page-link" href="?page={{ num }}{% if q %}&q={{ q }}{% endif %}">{{ num }}</a></li>
+        {% endif %}
+      {% endfor %}
+      
+      {% if games.has_next %}
+        <li class="page-item"><a class="page-link" href="?page={{ games.next_page_number }}{% if q %}&q={{ q }}{% endif %}">Next</a></li>
+      {% else %}
+        <li class="page-item disabled"><span class="page-link">Next</span></li>
+      {% endif %}
+    </ul>
+  </nav>
+  {% endif %}
+</div>
+{% endblock %}
