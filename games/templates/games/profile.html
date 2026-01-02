@@ -1,0 +1,47 @@
+{% extends 'games/base.html' %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+<div class="row profile-content">
+  <!-- Profile Card -->
+  <div class="col-md-4">
+    <div class="card p-4 text-center shadow-sm" style="background-color: rgba(35, 35, 35, 0.95);">
+      {% if profile.avatar %}
+        <img src="{{ profile.avatar.url }}" class="img-fluid rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+      {% else %}
+        <i class="bi bi-person-circle" style="font-size: 6rem; color: #ffcc88;"></i>
+      {% endif %}
+      <h3 class="mt-2" style="color: #fff6e0;">{{ request.user.username }}</h3>
+      <p style="color: #f5e9d6;">{{ profile.bio|default:"A brave soul wandering the realm." }}</p>
+      <p class="text-small" style="color: #e8e2d2;">Joined: {{ profile.joined_at|date:"M d, Y" }}</p>
+      <a href="{% url 'profile_edit' %}" class="btn btn-warning btn-sm mt-2">Edit Profile</a>
+    </div>
+  </div>
+
+  <!-- Games Grid -->
+  <div class="col-md-8">
+    <h4 class="mb-3" style="color: #fff6e0;">Your Games</h4>
+    {% if games %}
+      <div class="row g-3">
+        {% for game in games %}
+          <div class="col-md-6">
+            <div class="card h-100 shadow-sm" style="background-color: rgba(40, 40, 40, 0.95);">
+              <div class="card-body d-flex flex-column">
+                <h5 class="card-title" style="color: #fff6e0;">{{ game.name }}</h5>
+                <p class="card-text text-truncate" style="color: #f5e9d6;">{{ game.description|default:"No description" }}</p>
+                <div class="mt-auto">
+                  <a href="{% url 'game_update' game.pk %}" class="btn btn-sm btn-primary">Edit</a>
+                  <a href="{% url 'game_delete' game.pk %}" class="btn btn-sm btn-danger">Delete</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p style="color: #f5e9d6;">You haven’t added any games yet. <a href="{% url 'game_create' %}">Add one now!</a></p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

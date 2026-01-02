@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+import os
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -132,3 +134,5 @@ STATIC_URL = 'static/'
 LOGIN_URL = '/games/login/'           # redirect here if user is    not logged in
 LOGIN_REDIRECT_URL = '/games/'        # after login, go here
 LOGOUT_REDIRECT_URL = '/games/login/' # after logout, optional
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

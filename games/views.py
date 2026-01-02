@@ -3,11 +3,19 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.forms import ModelForm  # <-- Add this
 from .forms import GameForm
-from .models import Game
+from .models import Profile, Game
 from django.contrib.auth.views import LoginView, LogoutView
 from django.core.paginator import Paginator
+from .forms import UserForm, ProfileForm
 
+
+
+class ProfileForm(ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['avatar', 'bio']
 
 class GameLoginView(LoginView):
     template_name = "registration/login.html"
@@ -67,3 +75,32 @@ def game_delete(request, pk):
         messages.success(request, "Game removed from playlist!")
         return redirect('game_list')
     return render(request, 'games/game_confirm_delete.html', {'game': game})
+
+@login_required
+def profile_view(request):
+    profile = request.user.profile
+    games = Game.objects.filter(owner=request.user).order_by('-created_at')
+    return render(request, 'games/profile.html', {'profile': profile, 'games': games})
+
+@login_required
+def profile_edit(request):
+    user = request.user
+    profile = user.profile
+
+    if request.method == 'POST':
+        user_form = UserForm(request.POST, instance=user)
+        profile_form = ProfileForm(request.POST, request.FILES, instance=profile)
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            messages.success(request, "Profile updated successfully!")
+            return redirect('profile')
+    else:
+        user_form = UserForm(instance=user)
+        profile_form = ProfileForm(instance=profile)
+
+    return render(request, 'games/profile_edit.html', {
+        'user_form': user_form,
+        'profile_form': profile_form,
+        'profile': profile,
+    })
